@@ -4,7 +4,7 @@ defaults:
 
 # Input prompt for text generation
 prompt: |
-  Hello, how are you?
+  Kính Vạn Hoa Tập 1: 
 
 # Generation parameters
 max_new_tokens: 1024
