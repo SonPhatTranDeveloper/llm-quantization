@@ -11,7 +11,7 @@ train_split: 0.9
 # Training arguments
 training:
   output_dir: outputs/checkpoints
-  num_epochs: 3
+  num_epochs: 30
   per_device_train_batch_size: 4
   per_device_eval_batch_size: 4
   gradient_accumulation_steps: 4
