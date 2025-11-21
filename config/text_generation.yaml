@@ -3,7 +3,8 @@ defaults:
   - /quantization
 
 # Input prompt for text generation
-prompt: "Hello, how are you?"
+prompt: |
+  Hello, how are you?
 
 # Generation parameters
 max_new_tokens: 1024
