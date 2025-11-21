@@ -78,3 +78,20 @@ def format_text_box(text: str, width: int = 76, title: Optional[str] = None) -> 
 
     box_lines.append("└" + "─" * (width + 2) + "┘")
     return "\n".join(box_lines)
+
+
+def print_text_box(text: str, width: int = 76, title: Optional[str] = None) -> None:
+    """
+    Print text in a box directly to stdout, bypassing the logger.
+
+    This function preserves the visual formatting of the box by printing
+    directly to stdout instead of using the logger, which would add prefixes
+    to each line.
+
+    Args:
+        text: The text to format in the box
+        width: The width of the box (default: 76)
+        title: Optional title to display at the top of the box
+    """
+    boxed_text = format_text_box(text, width=width, title=title)
+    print(boxed_text, file=sys.stdout)

@@ -3,7 +3,7 @@ import time
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from src.utils.logging import format_text_box
+from src.utils.logging import print_text_box
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +20,8 @@ def log_generation_stats(
         tokens_per_second: Tokens per second throughput
     """
     stats_text = f"{num_tokens:,} tokens │ {generation_time:.3f}s │ {tokens_per_second:.2f} tokens/s"
-    boxed_text = format_text_box(stats_text, width=64, title="Generation Statistics")
     logger.info("")
-    logger.info(boxed_text)
+    print_text_box(stats_text, width=64, title="Generation Statistics")
     logger.info("")
 
 

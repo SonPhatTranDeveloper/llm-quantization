@@ -2,7 +2,7 @@ import logging
 import hydra
 from omegaconf import DictConfig
 from src.models import load_model, TextGenerator
-from src.utils.logging import setup_logging, format_text_box
+from src.utils.logging import setup_logging, print_text_box
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ def main(cfg: DictConfig) -> None:
 
     logger.info("Generation complete")
     logger.info("")
-    logger.info(format_text_box(generated_text, title="Generated Text"))
+    print_text_box(generated_text, title="Generated Text")
     logger.info("")
 
 
