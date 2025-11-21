@@ -1,6 +1,7 @@
 import logging
 import sys
 import textwrap
+from typing import Optional
 
 
 class ColoredFormatter(logging.Formatter):
@@ -42,7 +43,7 @@ def setup_logging() -> None:
     logger.handlers = [handler]
 
 
-def format_text_box(text: str, width: int = 76, title: str | None = None) -> str:
+def format_text_box(text: str, width: int = 76, title: Optional[str] = None) -> str:
     """
     Format text in a box with proper line wrapping.
 
