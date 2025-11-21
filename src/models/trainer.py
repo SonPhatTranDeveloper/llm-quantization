@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 
 from datasets import Dataset
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 from peft import LoraConfig, get_peft_model, TaskType
 from transformers import (
     AutoModelForCausalLM,
@@ -71,7 +71,10 @@ class ModelTrainer:
         lora_config_dict = self.config.lora
 
         # Determine target modules based on model architecture
-        target_modules = lora_config_dict.target_modules
+        # Convert ListConfig to regular list for JSON serialization
+        target_modules = OmegaConf.to_container(
+            lora_config_dict.target_modules, resolve=True
+        )
 
         lora_config = LoraConfig(
             task_type=TaskType.CAUSAL_LM,
