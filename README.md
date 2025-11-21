@@ -4,7 +4,7 @@ A project for testing model quantization with Large Language Models (LLMs) using
 
 ## Overview
 
-This project provides a simple interface for loading quantized LLM models and generating text. It supports 4-bit and 8-bit quantization using BitsAndBytes, which significantly reduces memory requirements while maintaining reasonable model performance.
+This project provides a simple interface for loading quantized LLM models, fine-tuning them with LoRA/QLoRA, and generating text. It supports 4-bit and 8-bit quantization using BitsAndBytes, which significantly reduces memory requirements while maintaining reasonable model performance. The training pipeline uses parameter-efficient LoRA/QLoRA fine-tuning for efficient model adaptation.
 
 ## Prerequisites
 
@@ -41,13 +41,21 @@ pip install bitsandbytes accelerate hf_transfer
 llm-quantization/
 ├── config/
 │   ├── quantization.yaml       # Quantization settings
-│   └── text_generation.yaml    # Text generation parameters
+│   ├── text_generation.yaml    # Text generation parameters
+│   └── training.yaml           # Training configuration
+├── data/
+│   └── kinhvanhoa.txt          # Training data
 ├── src/
 │   ├── models/
 │   │   ├── load.py             # Model loading utilities
-│   │   └── text_generation.py  # Text generation class
+│   │   ├── text_generation.py  # Text generation class
+│   │   └── trainer.py          # Training utilities
+│   ├── utils/
+│   │   ├── data.py             # Data preprocessing utilities
+│   │   └── logging.py          # Logging utilities
 │   └── scripts/
-│       └── text_generation.py  # Main script for text generation
+│       ├── text_generation.py  # Main script for text generation
+│       └── train.py             # Main script for training
 └── main.py                     # Entry point
 ```
 
@@ -68,13 +76,27 @@ The project uses Hydra for configuration management. Key configuration files:
 - `top_p`: Nucleus sampling threshold
 - `top_k`: Top-k sampling parameter
 
+### Training Configuration (`config/training.yaml`)
+- `data`: Path to training data file
+- `block_size`: Maximum sequence length for tokenized chunks
+- `train_split`: Fraction of data to use for training (rest for validation)
+- `training`: Training hyperparameters (learning rate, batch size, epochs, etc.)
+- `lora`: LoRA/QLoRA configuration (rank, alpha, target modules, dropout)
+
 ## Running the Project
 
-### Basic Usage
+### Text Generation
 
 Run text generation with default settings:
 ```bash
 python src/scripts/text_generation.py
+```
+
+### Training
+
+Run training with default settings:
+```bash
+python src/scripts/train.py
 ```
 
 ### Customizing Configuration
@@ -103,10 +125,33 @@ python src/scripts/text_generation.py prompt="Explain quantum computing" quantiz
 
 ### Using Different Models
 
-To use a different model, create a new configuration file in `config/models/` or override the model name:
+To use a different model, override the model name:
 
 ```bash
 python src/scripts/text_generation.py model_name="meta-llama/Llama-2-7b-hf"
+```
+
+```bash
+python src/scripts/train.py model_name="meta-llama/Llama-2-7b-hf"
+```
+
+### Customizing Training
+
+You can override training parameters via command line:
+
+**Change learning rate and batch size:**
+```bash
+python src/scripts/train.py training.learning_rate=1e-4 training.per_device_train_batch_size=8
+```
+
+**Change LoRA parameters:**
+```bash
+python src/scripts/train.py lora.r=32 lora.lora_alpha=64
+```
+
+**Change data path:**
+```bash
+python src/scripts/train.py data=data/my_data.txt
 ```
 
 ## Configuration Examples
@@ -129,6 +174,24 @@ python src/scripts/text_generation.py \
     top_p=0.95
 ```
 
+### Example 3: Training with QLoRA
+```bash
+python src/scripts/train.py \
+    quantization=4 \
+    training.learning_rate=2e-4 \
+    training.num_epochs=5 \
+    lora.r=16 \
+    lora.lora_alpha=32
+```
+
+### Example 4: Training with Custom Data
+```bash
+python src/scripts/train.py \
+    data=data/my_custom_data.txt \
+    training.num_epochs=3 \
+    training.per_device_train_batch_size=8
+```
+
 ## Development
 
 Install development dependencies:
@@ -146,6 +209,8 @@ ruff check .
 - `transformers`: HuggingFace Transformers library
 - `hydra-core`: Configuration management
 - `omegaconf`: Configuration object handling
-- `bitsandbytes`: Quantization library
+- `datasets`: Dataset handling and preprocessing
+- `peft`: Parameter-Efficient Fine-Tuning (LoRA/QLoRA)
 - `accelerate`: Model acceleration utilities
+- `bitsandbytes`: Quantization library
 
