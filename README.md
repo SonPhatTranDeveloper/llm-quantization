@@ -32,7 +32,7 @@ pip install -e .
 
 3. Install additional dependencies for quantization:
 ```bash
-pip install bitsandbytes accelerate
+pip install bitsandbytes accelerate hf_transfer
 ```
 
 ## Project Structure
@@ -40,8 +40,6 @@ pip install bitsandbytes accelerate
 ```
 llm-quantization/
 ├── config/
-│   ├── models/
-│   │   └── qwen2.5-3B.yaml    # Model configuration
 │   ├── quantization.yaml       # Quantization settings
 │   └── text_generation.yaml    # Text generation parameters
 ├── src/
