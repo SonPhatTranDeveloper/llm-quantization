@@ -208,6 +208,10 @@ class ModelTrainer:
         Args:
             output_dir: Directory to save the full model.
         """
+        # Merge LoRA adapters into base model
+        logger.info("Merging LoRA adapters into base model...")
+        self.model = self.model.merge_and_unload()
+
         # Save model
         logger.info(f"Saving model to {output_dir}")
         self.model.save_pretrained(output_dir)
