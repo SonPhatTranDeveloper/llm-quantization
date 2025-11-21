@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-@hydra.main(config_path="config", config_name="text_generation", version_base=None)
+@hydra.main(config_path="../../config", config_name="text_generation", version_base=None)
 def main(cfg: DictConfig) -> None:
     """
     Main function for text generation using Hydra configuration.
