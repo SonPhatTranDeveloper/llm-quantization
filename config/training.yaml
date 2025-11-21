@@ -35,7 +35,6 @@ training:
 
 # LoRA configuration
 lora:
-  enabled: true
   r: 16
   lora_alpha: 32
   target_modules: ["q_proj", "v_proj", "k_proj", "o_proj"]

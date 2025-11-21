@@ -171,17 +171,7 @@ class ModelTrainer:
         model, tokenizer = self.load_model_for_training()
 
         # Apply LoRA if enabled
-        if self.config.lora.enabled:
-            model = self.apply_lora(model)
-        else:
-            # If not using LoRA, still need to set model to training mode
-            model.train()
-            # Disable use_cache if gradient checkpointing is enabled
-            if self.config.training.gradient_checkpointing:
-                if hasattr(model, "gradient_checkpointing_enable"):
-                    model.gradient_checkpointing_enable()
-                if hasattr(model, "config") and hasattr(model.config, "use_cache"):
-                    model.config.use_cache = False
+        model = self.apply_lora(model)
 
         # Prepare datasets
         train_dataset, eval_dataset, data_collator = self.prepare_training()
