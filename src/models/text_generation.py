@@ -3,6 +3,8 @@ import time
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from src.utils.logging import format_text_box
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,19 +19,11 @@ def log_generation_stats(
         generation_time: Time taken for generation in seconds
         tokens_per_second: Tokens per second throughput
     """
-    stats_line = (
-        f"Generation stats: {num_tokens:,} tokens | "
-        f"{generation_time:.3f}s | "
-        f"{tokens_per_second:.2f} tokens/s"
-    )
-    # Middle line: "│ " + stats_line + " │" = len(stats_line) + 4 total width
-    # Top/bottom lines: "┌" + dashes + "┐" must match middle line width
-    # So: 1 + num_dashes + 1 = len(stats_line) + 4
-    # Therefore: num_dashes = len(stats_line) + 2
-    num_dashes = len(stats_line) + 2
-    logger.info("┌" + "─" * num_dashes + "┐")
-    logger.info("│ " + stats_line + " │")
-    logger.info("└" + "─" * num_dashes + "┘")
+    stats_text = f"{num_tokens:,} tokens │ {generation_time:.3f}s │ {tokens_per_second:.2f} tokens/s"
+    boxed_text = format_text_box(stats_text, width=64, title="Generation Statistics")
+    logger.info("")
+    logger.info(boxed_text)
+    logger.info("")
 
 
 class TextGenerator:
