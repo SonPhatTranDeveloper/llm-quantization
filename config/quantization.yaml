@@ -2,4 +2,4 @@
 model_name: "Qwen/Qwen2.5-0.5B"
 
 # Quantization bits (4 or 8)
-quantization: 4
+quantization: null
