@@ -40,9 +40,13 @@ def load_model(config: DictConfig) -> tuple[AutoModelForCausalLM, AutoTokenizer]
 
     # Load model
     bits_and_bytes_config = create_bits_and_bytes_config(quantization)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name, quantization_config=bits_and_bytes_config, device_map="auto"
-    )
+
+    if quantization is None:
+        model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto")
+    else:
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name, quantization_config=bits_and_bytes_config, device_map="auto"
+        )
 
     # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name)
