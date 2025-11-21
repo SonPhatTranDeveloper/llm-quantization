@@ -15,7 +15,7 @@ def main(cfg: DictConfig) -> None:
     Args:
         cfg: Hydra configuration object containing model and generation parameters
     """
-    model, tokenizer = load_model(cfg.model)
+    model, tokenizer = load_model(cfg)
     generator = TextGenerator(model, tokenizer)
 
     generated_text = generator.generate(
