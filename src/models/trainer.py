@@ -168,7 +168,7 @@ class ModelTrainer:
         logger.info("Starting training process")
 
         # Load model and tokenizer
-        model, tokenizer = self.load_model_for_training()
+        model, _ = self.load_model_for_training()
 
         # Apply LoRA if enabled
         model = self.apply_lora(model)
@@ -192,11 +192,30 @@ class ModelTrainer:
         logger.info("Beginning training")
         self.trainer.train()
 
-        # Save final model
-        logger.info(f"Saving final model to {training_args.output_dir}")
-        self.trainer.save_model()
+        # Save full model
+        self.save_model(training_args.output_dir)
+        logger.info("Training completed successfully")
+
+    def save_model(self, output_dir: str) -> None:
+        """
+        Save the full model by merging LoRA adapters into the base model.
+
+        This method merges the trained LoRA adapters with the base model
+        and saves the complete merged model. This is useful when you want
+        to save a standalone model without needing to load the base model
+        and adapters separately.
+
+        Args:
+            output_dir: Directory to save the full model.
+        """
+        # Merge adapters into base model
+        logger.info("Merging LoRA adapters into base model...")
+        merged_model = self.model.merge_and_unload()
+
+        # Save merged model
+        logger.info(f"Saving full merged model to {output_dir}")
+        merged_model.save_pretrained(output_dir)
 
         # Save tokenizer
-        tokenizer.save_pretrained(training_args.output_dir)
-
-        logger.info("Training completed successfully")
+        self.tokenizer.save_pretrained(output_dir)
+        logger.info("Full model saved successfully")
