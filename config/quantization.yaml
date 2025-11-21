@@ -1,8 +1,4 @@
 # This file contains the configuration for the quantization process
-defaults:
-  - _self_
-
-# This file contains the configuration for the Qwen2.5-3B model
 model_name: "Qwen/Qwen2.5-3B"
 
 # Quantization bits (4 or 8)
