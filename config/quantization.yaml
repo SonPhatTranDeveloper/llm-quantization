@@ -1,5 +1,5 @@
 # This file contains the configuration for the quantization process
-model_name: "Qwen/Qwen2.5-0.5B"
+model_name: "openai/gpt2"
 
 # Quantization bits (4 or 8)
 quantization: 4
