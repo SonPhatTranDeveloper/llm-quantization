@@ -1,0 +1,13 @@
+# This file contains the configuration for text generation
+defaults:
+  - /quantization
+
+# Input prompt for text generation
+prompt: "Hello, how are you?"
+
+# Generation parameters
+max_new_tokens: 1024
+temperature: 0.7
+top_p: 1.0
+top_k: 50
+
