@@ -1,5 +1,6 @@
 # This file contains the configuration for text generation
 defaults:
+  - _self_
   - /quantization
 
 # Input prompt for text generation
