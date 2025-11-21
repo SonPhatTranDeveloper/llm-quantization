@@ -85,20 +85,6 @@ class ModelTrainer:
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
 
-        # Enable gradient checkpointing after LoRA is applied
-        if self.config.training.gradient_checkpointing:
-            if hasattr(model, "gradient_checkpointing_enable"):
-                model.gradient_checkpointing_enable()
-                logger.info("Enabled gradient checkpointing")
-            # Disable use_cache when gradient checkpointing is enabled
-            if hasattr(model, "config"):
-                if hasattr(model.config, "use_cache"):
-                    model.config.use_cache = False
-                # Also check the base model config
-                if hasattr(model, "base_model") and hasattr(model.base_model, "config"):
-                    if hasattr(model.base_model.config, "use_cache"):
-                        model.base_model.config.use_cache = False
-
         # Set model to training mode to ensure gradients are enabled
         model.train()
 
@@ -165,8 +151,6 @@ class ModelTrainer:
             greater_is_better=training_config.greater_is_better,
             fp16=training_config.fp16,
             bf16=training_config.bf16,
-            gradient_checkpointing=training_config.gradient_checkpointing,
-            dataloader_pin_memory=False,
         )
 
         return training_args

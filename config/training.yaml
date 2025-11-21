@@ -32,7 +32,6 @@ training:
   greater_is_better: false
   fp16: false
   bf16: true
-  gradient_checkpointing: true
 
 # LoRA configuration
 lora:
