@@ -1,0 +1,2 @@
+# This file contains the configuration for the Qwen2.5-3B model
+model_name: "Qwen2.5-3B"
