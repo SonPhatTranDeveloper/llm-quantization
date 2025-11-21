@@ -170,8 +170,8 @@ class ModelTrainer:
         # Load model and tokenizer
         model, _ = self.load_model_for_training()
 
-        # Apply LoRA if enabled
-        model = self.apply_lora(model)
+        # Apply LoRA
+        self.model = self.apply_lora(model)
 
         # Prepare datasets
         train_dataset, eval_dataset, data_collator = self.prepare_training()
@@ -181,7 +181,7 @@ class ModelTrainer:
 
         # Create Trainer
         self.trainer = Trainer(
-            model=model,
+            model=self.model,
             args=training_args,
             train_dataset=train_dataset,
             eval_dataset=eval_dataset,
@@ -208,13 +208,9 @@ class ModelTrainer:
         Args:
             output_dir: Directory to save the full model.
         """
-        # Merge adapters into base model
-        logger.info("Merging LoRA adapters into base model...")
-        merged_model = self.model.merge_and_unload()
-
-        # Save merged model
-        logger.info(f"Saving full merged model to {output_dir}")
-        merged_model.save_pretrained(output_dir)
+        # Save model
+        logger.info(f"Saving model to {output_dir}")
+        self.model.save_pretrained(output_dir)
 
         # Save tokenizer
         self.tokenizer.save_pretrained(output_dir)
