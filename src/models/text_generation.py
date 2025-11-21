@@ -1,5 +1,35 @@
+import logging
+import time
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+logger = logging.getLogger(__name__)
+
+
+def log_generation_stats(
+    num_tokens: int, generation_time: float, tokens_per_second: float
+) -> None:
+    """
+    Log generation statistics in a boxed format.
+
+    Args:
+        num_tokens: Number of tokens generated
+        generation_time: Time taken for generation in seconds
+        tokens_per_second: Tokens per second throughput
+    """
+    stats_line = (
+        f"Generation stats: {num_tokens:,} tokens | "
+        f"{generation_time:.3f}s | "
+        f"{tokens_per_second:.2f} tokens/s"
+    )
+    # Middle line: "│ " + stats_line + " │" = len(stats_line) + 4 total width
+    # Top/bottom lines: "┌" + dashes + "┐" must match middle line width
+    # So: 1 + num_dashes + 1 = len(stats_line) + 4
+    # Therefore: num_dashes = len(stats_line) + 2
+    num_dashes = len(stats_line) + 2
+    logger.info("┌" + "─" * num_dashes + "┐")
+    logger.info("│ " + stats_line + " │")
+    logger.info("└" + "─" * num_dashes + "┘")
 
 
 class TextGenerator:
@@ -62,6 +92,7 @@ class TextGenerator:
         # Generate text with sampling parameters
         # Use do_sample=True when using temperature, top_p, or top_k
         with torch.no_grad():
+            start_time = time.perf_counter()
             outputs = self.model.generate(
                 **inputs,
                 max_new_tokens=max_new_tokens,
@@ -71,10 +102,16 @@ class TextGenerator:
                 do_sample=True,
                 pad_token_id=self.tokenizer.pad_token_id,
             )
+            generation_time = time.perf_counter() - start_time
 
         # Extract only the newly generated tokens (excluding the input prompt)
         input_length = inputs["input_ids"].shape[1]
         generated_tokens = outputs[0][input_length:]
+
+        # Calculate tokens per second
+        num_tokens = len(generated_tokens)
+        tokens_per_second = num_tokens / generation_time
+        log_generation_stats(num_tokens, generation_time, tokens_per_second)
 
         # Decode the generated tokens to text
         generated_text = self.tokenizer.decode(
