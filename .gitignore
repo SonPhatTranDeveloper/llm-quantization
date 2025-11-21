@@ -17,3 +17,6 @@ data/
 
 # Ruff
 .ruff_cache/
+
+# Model training
+outputs/
