@@ -1,4 +1,4 @@
-from omegaconf import OmegaDict
+from omegaconf import DictConfig
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import torch
 
@@ -21,7 +21,7 @@ def create_bits_and_bytes_config(quantization: int) -> BitsAndBytesConfig:
     raise ValueError(f"Invalid quantization bits: {quantization}")
 
 
-def load_model(config: OmegaDict) -> tuple[AutoModelForCausalLM, AutoTokenizer]:
+def load_model(config: DictConfig) -> tuple[AutoModelForCausalLM, AutoTokenizer]:
     """
     Load the model from the configuration
     The configuration is expected to be a dictionary with the following keys:
