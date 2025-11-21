@@ -49,12 +49,6 @@ class ModelTrainer:
         """
         model, tokenizer = load_model(self.config)
 
-        # Enable gradient checkpointing if specified
-        if self.config.training.gradient_checkpointing:
-            if hasattr(model, "gradient_checkpointing_enable"):
-                model.gradient_checkpointing_enable()
-                logger.info("Enabled gradient checkpointing")
-
         # Set pad token if not already set
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token
@@ -90,6 +84,23 @@ class ModelTrainer:
 
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
+
+        # Enable gradient checkpointing after LoRA is applied
+        if self.config.training.gradient_checkpointing:
+            if hasattr(model, "gradient_checkpointing_enable"):
+                model.gradient_checkpointing_enable()
+                logger.info("Enabled gradient checkpointing")
+            # Disable use_cache when gradient checkpointing is enabled
+            if hasattr(model, "config"):
+                if hasattr(model.config, "use_cache"):
+                    model.config.use_cache = False
+                # Also check the base model config
+                if hasattr(model, "base_model") and hasattr(model.base_model, "config"):
+                    if hasattr(model.base_model.config, "use_cache"):
+                        model.base_model.config.use_cache = False
+
+        # Set model to training mode to ensure gradients are enabled
+        model.train()
 
         logger.info("Applied LoRA adapters to model")
         return model
@@ -155,6 +166,7 @@ class ModelTrainer:
             fp16=training_config.fp16,
             bf16=training_config.bf16,
             gradient_checkpointing=training_config.gradient_checkpointing,
+            dataloader_pin_memory=False,
         )
 
         return training_args
@@ -174,6 +186,15 @@ class ModelTrainer:
         # Apply LoRA if enabled
         if self.config.lora.enabled:
             model = self.apply_lora(model)
+        else:
+            # If not using LoRA, still need to set model to training mode
+            model.train()
+            # Disable use_cache if gradient checkpointing is enabled
+            if self.config.training.gradient_checkpointing:
+                if hasattr(model, "gradient_checkpointing_enable"):
+                    model.gradient_checkpointing_enable()
+                if hasattr(model, "config") and hasattr(model.config, "use_cache"):
+                    model.config.use_cache = False
 
         # Prepare datasets
         train_dataset, eval_dataset, data_collator = self.prepare_training()
