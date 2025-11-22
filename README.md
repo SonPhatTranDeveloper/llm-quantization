@@ -54,7 +54,8 @@ llm-quantization/
 │   │   ├── data.py             # Data preprocessing utilities
 │   │   └── logging.py          # Logging utilities
 │   └── scripts/
-│       ├── text_generation.py  # Main script for text generation
+│       ├── download_model.py   # Script to download models from Hugging Face Hub
+│       ├── text_generation.py   # Main script for text generation
 │       └── train.py             # Main script for training
 └── main.py                     # Entry point
 ```
@@ -84,6 +85,21 @@ The project uses Hydra for configuration management. Key configuration files:
 - `lora`: LoRA/QLoRA configuration (rank, alpha, target modules, dropout)
 
 ## Running the Project
+
+### Downloading Models
+
+Download a model from Hugging Face Hub to a local folder:
+
+```bash
+python -m src.scripts.download_model <model_name> <folder_name>
+```
+
+**Example:**
+```bash
+python -m src.scripts.download_model meta-llama/Llama-2-7b-hf ./models/llama-2-7b
+```
+
+This will download all model files to the specified folder. The folder will be created if it doesn't exist.
 
 ### Text Generation
 
@@ -213,4 +229,5 @@ ruff check .
 - `peft`: Parameter-Efficient Fine-Tuning (LoRA/QLoRA)
 - `accelerate`: Model acceleration utilities
 - `bitsandbytes`: Quantization library
+- `huggingface-hub`: Hugging Face Hub integration for model downloads
 
