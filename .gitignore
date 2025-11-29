@@ -12,9 +12,6 @@ wheels/
 # Environment variables
 .env
 
-# Data
-data/
-
 # Ruff
 .ruff_cache/
 
